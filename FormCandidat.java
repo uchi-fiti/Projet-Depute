@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,8 @@ public class FormCandidat extends JPanel {
     private final Map<String, String[]> distrikaByFaritra = new HashMap<>();
     private final Map<String, String[]> bureauDeVoteByDistrika = new HashMap<>();
     private final Map<String, String[]> deputesByBureauDeVote = new HashMap<>();
+    private final JButton submitButton;
+    
 
     public FormCandidat() {
         initializeData();
@@ -32,6 +37,9 @@ public class FormCandidat extends JPanel {
         dropdown_distrika.addActionListener(e -> updateBV());
         dropdown_bureauDeVote.addActionListener(e -> updateDepute());
 
+        submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> handleSubmit("votes.txt"));
+
         setLayout(new GridLayout(5, 2, 5, 5));
         add(new JLabel("Faritany:"));
         add(dropdown_faritany);
@@ -43,10 +51,33 @@ public class FormCandidat extends JPanel {
         add(dropdown_bureauDeVote);
         add(new JLabel("Depute:"));
         add(dropdown_depute);
+        add(submitButton);
 
         updateFaritra();
     }
+    private void handleSubmit(String filename) {
+        String faritany = getSelectedFaritany();
+        String faritra = getSelectedFaritra();
+        String distrika = getSelectedDistrika();
+        String bv = getSelectedBv();
+        String depute = getSelectedDepute();
 
+        if (faritany == null || faritra == null || distrika == null || bv == null || depute == null) {
+            JOptionPane.showMessageDialog(this, "Please make a selection in all fields.", "Incomplete Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String dataLine = String.join(";;", faritany, faritra, distrika, bv, depute);
+
+        try (FileWriter fw = new FileWriter(filename, true);
+             PrintWriter pw = new PrintWriter(fw)) {
+            pw.println(dataLine);
+            JOptionPane.showMessageDialog(this, "Information saved successfully to " + filename);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error writing to file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 private void initializeData() {
     // 6 provinces
     String[] provinces = new String[]
