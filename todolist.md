@@ -1,0 +1,11 @@
+- misy formulaire anakiroa alo
+  - formulaire 1 (manapoitra candidat ao amin'izay selectionne ahafahana mampiditra ny nombre de vote-ny zay atao anaty fichier avy eo):
+    - Faritany: 6
+    - Faritra: 24
+    - District: 120
+    - Bureau de vote: jsp
+  - formulaire 2 (manapoitra resultat ao amin'izay selectionne):
+    - Faritany: 6
+    - Faritra: 24
+    - District: 120
+- raha te hanapoitra resultat zany de tokony vakiana le fichier (de base nombre de vote tokony 0 amzay afaka calculena foana)
