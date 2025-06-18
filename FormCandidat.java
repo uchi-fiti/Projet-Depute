@@ -40,7 +40,6 @@ public class FormCandidat extends JPanel {
         dropdown_faritra.addActionListener(e -> updateDistrika());
         dropdown_distrika.addActionListener(e -> updateBV());
         dropdown_bureauDeVote.addActionListener(e -> updateDepute());
-        dropdown_depute.addActionListener(e -> insertNombreVote());
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> handleSubmit("votes.txt"));
@@ -78,7 +77,8 @@ public class FormCandidat extends JPanel {
         String distrika = getSelectedDistrika();
         String bv = getSelectedBv();
         String depute = getSelectedDepute();
-        String nombreDeVotes = Integer.toString(getNombreVotes());
+        String nombreDeVotes = getNombreVotes();
+        System.out.println("Nombre de votes: " + nombreDeVotes);
 
         if (faritany == null || faritra == null || distrika == null || bv == null || depute == null) {
             JOptionPane.showMessageDialog(this, "Please make a selection in all fields.", "Incomplete Selection", JOptionPane.WARNING_MESSAGE);
@@ -110,61 +110,67 @@ private void initializeData() {
     };
 
     // Provinces → Régions
-    faritraByFaritany.put("Antananarivo", new String[]{"Analamanga", "Vakinankaratra", "Itasy", "Bongolava"});
-    faritraByFaritany.put("Antsiranana", new String[]{"Diana", "Sava"});
-    faritraByFaritany.put("Mahajanga", new String[]{"Boeny", "Betsiboka", "Melaky", "Sofia"});
-    faritraByFaritany.put("Toamasina", new String[]{"Alaotra-Mangoro", "Atsinanana", "Analanjirofo"});
-    faritraByFaritany.put("Fianarantsoa", new String[]{"Amoron'i Mania", "Haute Matsiatra", "Vatovavy", "Atsimo-Atsinanana", "Ihorombe", "Fitovinany"});
-    faritraByFaritany.put("Toliara", new String[]{"Menabe", "Atsimo-Andrefana", "Androy", "Anosy"});
+    faritraByFaritany.put(null, new String[0]);
+    faritraByFaritany.put("Antananarivo", new String[]{null, "Analamanga", "Vakinankaratra", "Itasy", "Bongolava"});
+    faritraByFaritany.put("Antsiranana", new String[]{null, "Diana", "Sava"});
+    faritraByFaritany.put("Mahajanga", new String[]{null, "Boeny", "Betsiboka", "Melaky", "Sofia"});
+    faritraByFaritany.put("Toamasina", new String[]{null, "Alaotra-Mangoro", "Atsinanana", "Analanjirofo"});
+    faritraByFaritany.put("Fianarantsoa", new String[]{null, "Amoron'i Mania", "Haute Matsiatra", "Vatovavy", "Atsimo-Atsinanana", "Ihorombe", "Fitovinany"});
+    faritraByFaritany.put("Toliara", new String[]{null, "Menabe", "Atsimo-Andrefana", "Androy", "Anosy"});
 
     // Régions → Districts (extraits pour Analamanga, Diana ; répliquer pour toutes)
-    distrikaByFaritra.put("Analamanga", new String[]{"Antananarivo-Renivohitra", "Antananarivo-Avaradrano", "Antananarivo-Atsimondrano", "Ambohidratrimo", "Andramasina", "Anjozorobe", "Ankazobe", "Manjakandriana"});
-    distrikaByFaritra.put("Vakinankaratra", new String[]{"Antsirabe I", "Antsirabe II", "Ambatolampy", "Antanifotsy", "Betafo", "Faratsiho", "Mandoto"});
-    distrikaByFaritra.put("Itasy", new String[]{"Arivonimamo", "Miarinarivo", "Soavinandriana"});
-    distrikaByFaritra.put("Bongolava", new String[]{"Tsiroanomandidy", "Fenoarivobe"});
+    distrikaByFaritra.put(null, new String[0]);
+    distrikaByFaritra.put("Analamanga", new String[]{null, "Antananarivo-Renivohitra", "Antananarivo-Avaradrano", "Antananarivo-Atsimondrano", "Ambohidratrimo", "Andramasina", "Anjozorobe", "Ankazobe", "Manjakandriana"});
+    distrikaByFaritra.put("Vakinankaratra", new String[]{null, "Antsirabe I", "Antsirabe II", "Ambatolampy", "Antanifotsy", "Betafo", "Faratsiho", "Mandoto"});
+    distrikaByFaritra.put("Itasy", new String[]{null, "Arivonimamo", "Miarinarivo", "Soavinandriana"});
+    distrikaByFaritra.put("Bongolava", new String[]{null, "Tsiroanomandidy", "Fenoarivobe"});
 
     // Province d'Antsiranana
-    distrikaByFaritra.put("Diana", new String[]{"Antsiranana I", "Antsiranana II", "Ambanja", "Ambilobe", "Nosy-Be"});
-    distrikaByFaritra.put("Sava", new String[]{"Sambava", "Antalaha", "Vohemar", "Andapa"});
+    distrikaByFaritra.put("Diana", new String[]{null, "Antsiranana I", "Antsiranana II", "Ambanja", "Ambilobe", "Nosy-Be"});
+    distrikaByFaritra.put("Sava", new String[]{null, "Sambava", "Antalaha", "Vohemar", "Andapa"});
 
     // Province de Mahajanga
-    distrikaByFaritra.put("Boeny", new String[]{"Mahajanga I", "Mahajanga II", "Marovoay", "Ambato-Boeni", "Mitsinjo", "Soalala"});
-    distrikaByFaritra.put("Betsiboka", new String[]{"Maevatanana", "Tsaratanana", "Kandreho"});
-    distrikaByFaritra.put("Melaky", new String[]{"Maintirano", "Besalampy", "Antsalova", "Morafenobe", "Ambatomainty"});
-    distrikaByFaritra.put("Sofia", new String[]{"Antsohihy", "Port-Bergé", "Befandriana-Nord", "Mandritsara", "Analalava", "Mampikony", "Bealanana"});
+    distrikaByFaritra.put("Boeny", new String[]{null, "Mahajanga I", "Mahajanga II", "Marovoay", "Ambato-Boeni", "Mitsinjo", "Soalala"});
+    distrikaByFaritra.put("Betsiboka", new String[]{null, "Maevatanana", "Tsaratanana", "Kandreho"});
+    distrikaByFaritra.put("Melaky", new String[]{null, "Maintirano", "Besalampy", "Antsalova", "Morafenobe", "Ambatomainty"});
+    distrikaByFaritra.put("Sofia", new String[]{null, "Antsohihy", "Port-Bergé", "Befandriana-Nord", "Mandritsara", "Analalava", "Mampikony", "Bealanana"});
 
     // Province de Toamasina
-    distrikaByFaritra.put("Alaotra-Mangoro", new String[]{"Ambatondrazaka", "Amparafaravola", "Andilamena", "Anosibe An'ala", "Moramanga"});
-    distrikaByFaritra.put("Atsinanana", new String[]{"Toamasina I", "Toamasina II", "Brickaville", "Vatomandry", "Mahanoro", "Marolambo", "Antanambao Manampotsy"});
-    distrikaByFaritra.put("Analanjirofo", new String[]{"Fenoarivo Atsinanana", "Soanierana Ivongo", "Sainte-Marie", "Mananara Nord", "Maroantsetra", "Vavatenina"});
+    distrikaByFaritra.put("Alaotra-Mangoro", new String[]{null, "Ambatondrazaka", "Amparafaravola", "Andilamena", "Anosibe An'ala", "Moramanga"});
+    distrikaByFaritra.put("Atsinanana", new String[]{null, "Toamasina I", "Toamasina II", "Brickaville", "Vatomandry", "Mahanoro", "Marolambo", "Antanambao Manampotsy"});
+    distrikaByFaritra.put("Analanjirofo", new String[]{null, "Fenoarivo Atsinanana", "Soanierana Ivongo", "Sainte-Marie", "Mananara Nord", "Maroantsetra", "Vavatenina"});
 
     // Province de Fianarantsoa
-    distrikaByFaritra.put("Amoron'i Mania", new String[]{"Ambositra", "Ambatofinandrahana", "Manandriana", "Fandriana"});
-    distrikaByFaritra.put("Haute Matsiatra", new String[]{"Fianarantsoa I", "Ambalavao", "Ambohimahasoa", "Ikalamavony", "Isandra", "Lalangina", "Vohibato"});
-    distrikaByFaritra.put("Vatovavy", new String[]{"Mananjary", "Nosy Varika", "Ifanadiana"});
-    distrikaByFaritra.put("Fitovinany", new String[]{"Manakara", "Vohipeno", "Ikongo"});
-    distrikaByFaritra.put("Atsimo-Atsinanana", new String[]{"Farafangana", "Vangaindrano", "Vondrozo", "Befotaka", "Midongy-Atsimo"});
-    distrikaByFaritra.put("Ihorombe", new String[]{"Ihosy", "Iakora", "Ivohibe"});
+    distrikaByFaritra.put("Amoron'i Mania", new String[]{null, "Ambositra", "Ambatofinandrahana", "Manandriana", "Fandriana"});
+    distrikaByFaritra.put("Haute Matsiatra", new String[]{null, "Fianarantsoa I", "Ambalavao", "Ambohimahasoa", "Ikalamavony", "Isandra", "Lalangina", "Vohibato"});
+    distrikaByFaritra.put("Vatovavy", new String[]{null, "Mananjary", "Nosy Varika", "Ifanadiana"});
+    distrikaByFaritra.put("Fitovinany", new String[]{null, "Manakara", "Vohipeno", "Ikongo"});
+    distrikaByFaritra.put("Atsimo-Atsinanana", new String[]{null, "Farafangana", "Vangaindrano", "Vondrozo", "Befotaka", "Midongy-Atsimo"});
+    distrikaByFaritra.put("Ihorombe", new String[]{null, "Ihosy", "Iakora", "Ivohibe"});
 
     // Province de Toliara
-    distrikaByFaritra.put("Menabe", new String[]{"Morondava", "Mahabo", "Manja", "Miandrivazo", "Belo-sur-Tsiribihina"});
-    distrikaByFaritra.put("Atsimo-Andrefana", new String[]{"Toliara I", "Toliara II", "Ampanihy", "Ankazoabo", "Benenitra", "Beroroha", "Betioky-Atsimo", "Morombe", "Sakaraha"});
-    distrikaByFaritra.put("Androy", new String[]{"Ambovombe-Androy", "Bekily", "Beloha", "Tsiombe"});
-    distrikaByFaritra.put("Anosy", new String[]{"Tolagnaro", "Amboasary-Atsimo", "Betroka"});
+    distrikaByFaritra.put("Menabe", new String[]{null, "Morondava", "Mahabo", "Manja", "Miandrivazo", "Belo-sur-Tsiribihina"});
+    distrikaByFaritra.put("Atsimo-Andrefana", new String[]{null, "Toliara I", "Toliara II", "Ampanihy", "Ankazoabo", "Benenitra", "Beroroha", "Betioky-Atsimo", "Morombe", "Sakaraha"});
+    distrikaByFaritra.put("Androy", new String[]{null, "Ambovombe-Androy", "Bekily", "Beloha", "Tsiombe"});
+    distrikaByFaritra.put("Anosy", new String[]{null, "Tolagnaro", "Amboasary-Atsimo", "Betroka"});
     // → à compléter pour chaque région...
     // Districts → bureaux de vote et députés
     // int counter = 0;
+    bureauDeVoteByDistrika.put(null, new String[0]);
+    deputesByDistrika.put(null, new String[0]);
     for (var entry : distrikaByFaritra.entrySet()) {
         String region = entry.getKey();
         for (String distrika : entry.getValue()) {
             // créer 3 BV par distrika
             // counter++;
             List<String> bvList = new ArrayList<>();
+            bvList.add(null);
             for (int i = 1; i <= 3; i++) {
                 String bv = distrika + "_BV" + i;
                 bvList.add(bv);
             }
             List<String> deputeList = new ArrayList<>();
+            deputeList.add(null);
             for (int i = 1; i <= 10; i++) {
                 String depute = distrika + "_depute_" + i;
                 deputeList.add(depute);
@@ -236,13 +242,8 @@ private void initializeData() {
     {
         return (String) dropdown_depute.getSelectedItem();
     }
-    public int getNombreVotes() {
-        try {
-            return Integer.parseInt(nombredevotes.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Veuillez entrez un nombre valide", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-            return -1; 
-        }
+    public String getNombreVotes() {
+            return (String) nombredevotes.getText();
     }
 
 
