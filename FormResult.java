@@ -1,3 +1,5 @@
+package affichage;
+
 import java.awt.GridLayout;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,7 +44,7 @@ public class FormResult extends JPanel {
 
         submitButton = new JButton("Submit");
         // submitButton.addActionListener(e -> handleSubmit("votes.txt"));
-
+        setSize(100, 100);
         setLayout(new GridLayout(5, 2, 5, 5));
         add(new JLabel("Faritany:"));
         add(dropdown_faritany);
@@ -52,7 +54,7 @@ public class FormResult extends JPanel {
         add(dropdown_distrika);
         add(new JLabel("Bureau de vote:"));
         add(dropdown_bureauDeVote);
-        add(submitButton);
+        // add(submitButton);
 
         updateFaritra();
     }
@@ -195,14 +197,5 @@ private void initializeData() {
         return (String) dropdown_bureauDeVote.getSelectedItem();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Formulaire Candidat");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(new FormCandidat());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
+
 }

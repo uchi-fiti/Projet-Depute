@@ -1,5 +1,8 @@
+package affichage;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,11 +18,12 @@ public class FormCandidat extends JPanel {
     private final JComboBox<String> dropdown_distrika;
     private final JComboBox<String> dropdown_bureauDeVote;
     private final JComboBox<String> dropdown_depute;
+    private JTextField nombredevotes;
 
     private final Map<String, String[]> faritraByFaritany = new HashMap<>();
     private final Map<String, String[]> distrikaByFaritra = new HashMap<>();
     private final Map<String, String[]> bureauDeVoteByDistrika = new HashMap<>();
-    private final Map<String, String[]> deputesByBureauDeVote = new HashMap<>();
+    private final Map<String, String[]> deputesByDistrika = new HashMap<>();
     private final JButton submitButton;
     
 
@@ -36,9 +40,11 @@ public class FormCandidat extends JPanel {
         dropdown_faritra.addActionListener(e -> updateDistrika());
         dropdown_distrika.addActionListener(e -> updateBV());
         dropdown_bureauDeVote.addActionListener(e -> updateDepute());
+        dropdown_depute.addActionListener(e -> insertNombreVote());
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> handleSubmit("votes.txt"));
+        
 
         setLayout(new GridLayout(5, 2, 5, 5));
         add(new JLabel("Faritany:"));
@@ -51,8 +57,19 @@ public class FormCandidat extends JPanel {
         add(dropdown_bureauDeVote);
         add(new JLabel("Depute:"));
         add(dropdown_depute);
+        add(new JLabel("Nombre de votes:"));
+        add(nombredevotes = new JTextField(5));
         add(submitButton);
-
+        
+        JFrame frame = new JFrame("Formulaire Candidat");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1366, 768);
+        // frame.getContentPane().add(new FormCandidat());
+        // frame.pack();
+        // frame.setLocationRelativeTo(null);
+        frame.add(this);
+        frame.setVisible(true);
+        
         updateFaritra();
     }
     private void handleSubmit(String filename) {
@@ -61,22 +78,29 @@ public class FormCandidat extends JPanel {
         String distrika = getSelectedDistrika();
         String bv = getSelectedBv();
         String depute = getSelectedDepute();
+        String nombreDeVotes = Integer.toString(getNombreVotes());
 
         if (faritany == null || faritra == null || distrika == null || bv == null || depute == null) {
             JOptionPane.showMessageDialog(this, "Please make a selection in all fields.", "Incomplete Selection", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String dataLine = String.join(";;", faritany, faritra, distrika, bv, depute);
-
-        try (FileWriter fw = new FileWriter(filename, true);
-             PrintWriter pw = new PrintWriter(fw)) {
-            pw.println(dataLine);
+        String dataLine = String.join(";;", faritany, faritra, distrika, bv, depute, nombreDeVotes);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+            writer.write(dataLine);
+            writer.newLine();
             JOptionPane.showMessageDialog(this, "Information saved successfully to " + filename);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error writing to file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }
+    private void insertNombreVote()
+    {
+        nombredevotes = new JTextField(10);
+        add(nombredevotes);
+        System.out.println("Nombre de votes added! ");
     }
 private void initializeData() {
     // 6 provinces
@@ -128,27 +152,30 @@ private void initializeData() {
     distrikaByFaritra.put("Androy", new String[]{"Ambovombe-Androy", "Bekily", "Beloha", "Tsiombe"});
     distrikaByFaritra.put("Anosy", new String[]{"Tolagnaro", "Amboasary-Atsimo", "Betroka"});
     // → à compléter pour chaque région...
-
     // Districts → bureaux de vote et députés
+    // int counter = 0;
     for (var entry : distrikaByFaritra.entrySet()) {
         String region = entry.getKey();
         for (String distrika : entry.getValue()) {
             // créer 3 BV par distrika
+            // counter++;
             List<String> bvList = new ArrayList<>();
             for (int i = 1; i <= 3; i++) {
                 String bv = distrika + "_BV" + i;
                 bvList.add(bv);
-
-                // pour chaque BV, assigner 2 députés fictifs
-                deputesByBureauDeVote.put(bv, new String[]{
-                    "Deputé_" + bv + "_1",
-                    "Deputé_" + bv + "_2"
-            });
+            }
+            List<String> deputeList = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                String depute = distrika + "_depute_" + i;
+                deputeList.add(depute);
             }
             String [] bvstring = bvList.toArray(new String[0]);
+            String [] deputestring = deputeList.toArray(new String[0]);
             bureauDeVoteByDistrika.put(distrika, bvstring);
+            deputesByDistrika.put(distrika, deputestring);
         }
     }
+    // System.out.println("Il y a " + counter + " distrika.");
 }
 
     private void updateFaritra() {
@@ -184,8 +211,8 @@ private void initializeData() {
         updateDepute();
     }
     private void updateDepute() {
-        String bureauDeVote_selected = (String) dropdown_bureauDeVote.getSelectedItem();
-        String[] depute = deputesByBureauDeVote.getOrDefault(bureauDeVote_selected, new String[0]);
+        String distrika_selected = (String) dropdown_distrika.getSelectedItem();
+        String[] depute = deputesByDistrika.getOrDefault(distrika_selected, new String[0]);
         dropdown_depute.setModel(new DefaultComboBoxModel<>(depute));
     }
 
@@ -208,6 +235,14 @@ private void initializeData() {
         public String getSelectedDepute()
     {
         return (String) dropdown_depute.getSelectedItem();
+    }
+    public int getNombreVotes() {
+        try {
+            return Integer.parseInt(nombredevotes.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Veuillez entrez un nombre valide", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            return -1; 
+        }
     }
 
 
