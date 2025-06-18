@@ -163,22 +163,25 @@ private void initializeData() {
         for (String distrika : entry.getValue()) {
             // créer 3 BV par distrika
             // counter++;
-            List<String> bvList = new ArrayList<>();
-            bvList.add(null);
-            for (int i = 1; i <= 3; i++) {
-                String bv = distrika + "_BV" + i;
-                bvList.add(bv);
+            if(distrika != null)
+            {
+                List<String> bvList = new ArrayList<>();
+                bvList.add(null);
+                for (int i = 1; i <= 3; i++) {
+                    String bv = distrika + "_BV" + i;
+                    bvList.add(bv);
+                }
+                List<String> deputeList = new ArrayList<>();
+                deputeList.add(null);
+                for (int i = 1; i <= 10; i++) {
+                    String depute = distrika + "_depute_" + i;
+                    deputeList.add(depute);
+                }
+                String [] bvstring = bvList.toArray(new String[0]);
+                String [] deputestring = deputeList.toArray(new String[0]);
+                bureauDeVoteByDistrika.put(distrika, bvstring);
+                deputesByDistrika.put(distrika, deputestring);
             }
-            List<String> deputeList = new ArrayList<>();
-            deputeList.add(null);
-            for (int i = 1; i <= 10; i++) {
-                String depute = distrika + "_depute_" + i;
-                deputeList.add(depute);
-            }
-            String [] bvstring = bvList.toArray(new String[0]);
-            String [] deputestring = deputeList.toArray(new String[0]);
-            bureauDeVoteByDistrika.put(distrika, bvstring);
-            deputesByDistrika.put(distrika, deputestring);
         }
     }
     // System.out.println("Il y a " + counter + " distrika.");
