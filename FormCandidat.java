@@ -60,6 +60,8 @@ public class FormCandidat extends JPanel {
         add(nombredevotes = new JTextField(5));
         add(submitButton);
         
+        submitButton.addActionListener(e -> handleSubmit("votes.txt"));
+
         JFrame frame = new JFrame("Formulaire Candidat");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1366, 768);
@@ -247,17 +249,5 @@ private void initializeData() {
     }
     public String getNombreVotes() {
             return (String) nombredevotes.getText();
-    }
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Formulaire Candidat");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(new FormCandidat());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 }

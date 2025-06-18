@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import data.*;
 
 public class FormResult extends JPanel {
 
@@ -45,7 +46,7 @@ public class FormResult extends JPanel {
         dropdown_distrika.addActionListener(e -> updateBV());
 
         submitButton = new JButton("Submit");
-        // submitButton.addActionListener(e -> handleSubmit("votes.txt"));
+        submitButton.addActionListener(e -> handleSubmit("votes.txt"));
         
 
         setLayout(new GridLayout(5, 2, 5, 5));
@@ -62,114 +63,63 @@ public class FormResult extends JPanel {
         JFrame frame = new JFrame("Formulaire Resultat");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1366, 768);
+        frame.add(this);
         // frame.getContentPane().add(new FormCandidat());    
         frame.setVisible(true);
         
         updateFaritra();
     }
-private void handleSubmit(String filename) throws Exception{
+private void handleSubmit(String filename){
     String faritany = getSelectedFaritany();
     String faritra = getSelectedFaritra();
     String distrika = getSelectedDistrika();
     String bv = getSelectedBv();
-    JFrame result = new JFrame("Resulat de l'election");
-    Vector <String[]> deputes = getDeputes(faritany, faritra, distrika, bv);    
+    Vector <String[]> datas;
+    Map <String, Integer> deputesToShow;
+    if(faritany == null)
+    {
+        datas = Gestion.getAllDeputes(filename);
+    }
+    else if(faritany != null && faritra == null)
+    {
+        datas = Gestion.getDeputesByFaritany(faritany, filename);
+    }
+    else if(faritany != null && faritra != null && distrika == null)
+    {
+        datas = Gestion.getDeputesByFaritra(faritra, filename);
+    }
+    else if(faritany != null && faritra != null && distrika != null && bv == null)
+    {
+        datas = Gestion.getDeputesByDistricts(distrika, filename);
+    }
+    else {
+        datas = Gestion.getDeputesByBv(bv, filename);
+    }
+    deputesToShow = Gestion.toHashMap(datas);
+    for(Map.Entry <String, Integer> entry : deputesToShow.entrySet())
+    {
+        System.out.println("Depute: " + entry.getKey() + ", Nombre de votes: " + entry.getValue());
+    }
+    Tableau t = new Tableau(deputesToShow);
+    // Vector <String[]> loaded;
+    // try {
+        //     loaded = Gestion.loadDeputes(filename);
+        // }
+        // catch (Exception e)
+        // {
+            //     throw new RuntimeException();
+            // }
+    JFrame result = new JFrame("Resulat des elections");
+    result.add(t);
+    // System.out.println("Deputes loaded from file: ");
+    // for(String [] s : loaded)
+    // {
+    //     System.out.println("Faritany: " + s[0] + ", Faritra: " + s[1] + ", Distrika: " + s[2] + "Bv: " + s[3] + 
+    //     ", Deputes: " + s[4] + "Nombre de votes: " + s[5]);
+    // }
     result.setSize(1366, 768);
     result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
-    Vector <String[]> deputesInFile = new Vector<>();
-    try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            // line = line.replace(";", "");
-            String[] pieceData = line.split(";;");
-            deputesInFile.add(pieceData);
-        }
-    }
-    catch (Exception e) {
-    }
-}
-Vector<String[]> getDeputes(String faritany, String faritra, String distrika, String bv) {
-    Vector<String[]> retour = new Vector<>();
-
-    if (bv == null) {
-        retour.add(deputesByDistrika.getOrDefault(bv, new String[0]));
-        return retour;
-    }
-
-    if (distrika == null) {
-        for (String[] deputes : deputesByDistrika.values()) {
-            retour.add(deputes);
-        }
-        return retour;
-    }
-
-    if (faritra == null) {
-        // Collect all deputes for all faritra
-        for (String[] deputes : deputesByFaritra.values()) {
-            retour.add(deputes);
-        }
-        return retour;
-    }
-
-    if (faritany == null) {
-        // Collect all deputes for all faritany
-        for (String[] deputes : deputesByFaritany.values()) {
-            retour.add(deputes);
-        }
-        return retour;
-    }
-
-    // Default case: retrieve deputes for the specific distrika
-    String[] deputes = deputesByDistrika.getOrDefault(distrika, new String[0]);
-    retour.add(deputes);
-    return retour;
-}
-public Vector <String[]> getDeputesByDistricts(String district)
-{
-    Vector <String[]> retour = new Vector<>();
-    String [] deputes = deputesByDistrika.getOrDefault(district, new String[0]);
-    retour.add(deputes);
-    return retour;
-}
-public Vector <String[]> getDeputesByFaritra(String faritra)
-{
-    Vector <String[]> retour = new Vector<>();
-
-    String [] distrika = distrikaByFaritra.getOrDefault(faritra, new String[0]);
-    for(String d : distrika)
-    {
-        retour.add(deputesByDistrika.getOrDefault(d, new String[0]));
-    }
-    return retour;
-}
-public Vector <String[]> getDeputesByFaritany(String faritany)
-{
-    Vector <String[]> retour = new Vector<>();
-    String [] faritra = faritraByFaritany.getOrDefault(faritany, new String[0]);
-    for(String f : faritra)
-    {
-        Vector <String[]> deputesByFaritra = getDeputesByFaritra(f);
-        for(String [] s : deputesByFaritra)
-        {
-            retour.add(s);
-        }
-    }
-    return retour;
-}
-public Vector <String[]> getAllDeputes()
-{
-    Vector <String[]> retour = new Vector<>();
-    for(Map.Entry<String, String[]> entry1 : faritraByFaritany.entrySet())
-    {
-        String faritany = entry1.getKey();
-        Vector <String[]> deputesByFaritany = getDeputesByFaritra(faritany);
-        for(String [] s : deputesByFaritany)
-        {
-            retour.add(s);
-        }
-    }
-    return retour;
+    result.setVisible(true);
 }
 private void initializeData() {
     // 6 provinces
@@ -302,17 +252,5 @@ private void initializeData() {
         public String getSelectedBv()
     {
         return (String) dropdown_bureauDeVote.getSelectedItem();
-    }
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Formulaire Candidat");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(new FormCandidat());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 }

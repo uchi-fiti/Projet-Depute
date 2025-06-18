@@ -1,1 +1,4 @@
 Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana_BV1;;Manjakandriana_depute_1;;1000
+Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana_BV1;;Manjakandriana_depute_1;;12
+Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana_BV1;;Manjakandriana_depute_3;;124
+Antananarivo;;Analamanga;;Antananarivo-Avaradrano;;Antananarivo-Avaradrano_BV2;;Antananarivo-Avaradrano_depute_5;;789
