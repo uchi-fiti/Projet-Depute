@@ -107,74 +107,20 @@ public Vector <String[]> getDeputesByDistricts(String district, String filename)
     }
     return retour;
 }
-public Vector <String[]> getDeputesByFaritra(String faritra, String filename)
-{
-    Vector <String[]> retour = new Vector<>();
-    Vector <String[]> loaded;
-    try {
-        loaded = loadDeputes(filename);
-    }
-    catch (Exception e)
-    {
-        throw new RuntimeException();
-    }
-    for(String [] s : loaded)
-    {
-        if(s[1].equals(faritra))
-        {
-            retour.add(s);
-        }
-    }
-    return retour;
-}
-public Vector <String[]> getDeputesByFaritany(String faritany, String filename)
-{
-    Vector <String[]> retour = new Vector<>();
-    Vector <String[]> loaded;
-    try {
-        loaded = loadDeputes(filename);
-    }
-    catch (Exception e)
-    {
-        throw new RuntimeException();
-    }
-    for(String [] s : loaded)
-    {
-        if(s[0].equals(faritany))
-        {
-            retour.add(s);
-        }
-    }
-    return retour;
-}
-public Vector <String[]> getAllDeputes(String filename)
-{
-    Vector <String[]> retour = new Vector<>();
-    Vector <String[]> loaded;
-    try {
-        loaded = loadDeputes(filename);
-    }
-    catch (Exception e)
-    {
-        throw new RuntimeException();
-    }
-    for(String [] s : loaded)
-    {
-        retour.add(s);
-    }
-    return retour;
-}
 public District getDistrict(String nom_district)
 {
     for(Faritany f : faritany)
     {
-        for(Faritra ff : f.getFaritra())
+        if(f != null)
         {
-            for(District d : ff.getDistricts())
+            for(Faritra ff : f.getFaritra())
             {
-                if(d.getName().equals(nom_district))
+                for(District d : ff.getDistricts())
                 {
-                    return d;
+                    if(d.getName().equals(nom_district))
+                    {
+                        return d;
+                    }
                 }
             }
         }
@@ -185,19 +131,198 @@ public Vector <Depute> getElus(String district, String filename)
 {
     Vector <String[]> deputesByDistricts = getDeputesByDistricts(district, filename);
     Vector <Depute> retour = new Vector<>();
-    deputesByDistricts.sort((a, b) -> Integer.compare(Integer.parseInt(a[5]), Integer.parseInt(b[5])));
-    District currentDistrict = getDistrict(district);
-    for(int i = 0; i < currentDistrict.getnombreElus(); i++)
+    if(deputesByDistricts.isEmpty())
     {
-        Depute temp = new Depute(deputesByDistricts.get(i)[4]);
-        temp.setDistrict(currentDistrict);
+        return retour;
+    }
+    Depute elu;
+    Depute elu2;
+    deputesByDistricts.sort((a, b) -> Integer.compare(Integer.parseInt(b[5]), Integer.parseInt(a[5])));
+    // Map <String, Map <String, Integer>> deputes = toHashMap(deputesByDistricts);
+    District currentDistrict = getDistrict(district);
+    // for(int i = 0; i < currentDistrict.getnombreElus(); i++)
+    // {
+    //     Depute temp = new Depute(deputesByDistricts.get(i)[4]);
+    //     temp.setDistrict(currentDistrict);
+    //     retour.add(temp);
+    // }
+    Vector <Depute> sorted = toVectorDepute(deputesByDistricts);
+    retour.add(sorted.get(0));
+    if(currentDistrict.getnombreElus() == 2)
+    {
+        elu = sorted.get(0);
+        elu2 = sorted.get(1);
+        Depute second = findSecond(elu, sorted);
+        if(nombreDeVotes(elu, deputesByDistricts) > 2*nombreDeVotes(elu2, deputesByDistricts) && !second.equals(elu2))
+        {
+            retour.add(second);
+        }
+        else
+        {
+            retour.add(elu2);
+        }
+    }
+    return retour;
+}
+public int nombreDeVotes(Depute d, Vector <String[]> datas)
+{
+    int nbvotes = 0;
+    int retour = 0;
+    for(String [] s : datas)
+    {
+        String district = s[2];
+        String nomD = s[4];
+        nbvotes =(int) Integer.parseInt(s[5]);
+        if(d.getName().equals(nomD) && d.getDistrict().getName().equals(district))
+        {
+            retour += nbvotes;
+        }
+    }
+    return retour;
+}
+public Depute findSecond(Depute d, Vector <Depute> datas)
+{
+    Vector <Depute> ds = deputesMmCritere(d, datas);
+    return ds.get(1);
+}
+public Vector <Depute> deputesMmCritere(Depute d, Vector <Depute> deputes)
+{
+    Vector <Depute> retour = new Vector<>();
+    for(Depute dd : deputes)
+    {
+        if(partiPolitique(dd).equals(partiPolitique(d)) && district(dd).equals(district(d)))
+        {
+            retour.add(dd);
+        }
+    }
+    return retour;
+}
+public District district(Depute d)
+{
+    for(Faritany f : faritany)
+    {
+        for(Faritra ff : f.getFaritra())
+        {
+            for(District dd : ff.getDistricts())
+            {
+                if(dd.equals(d))
+                {
+                    return dd;
+                }
+            }
+        }
+    }
+    return null;
+}
+public PartiPolitique partiPolitique(Depute d)
+{
+    for(Faritany f : faritany)
+    {
+        if(f != null)
+        {
+            for(Faritra ff : f.getFaritra())
+            {
+                for(District dd : ff.getDistricts())
+                {
+                    for(PartiPolitique pp : dd.getPP())
+                    {
+                        if(pp.getDeputes().contains(d))
+                        {
+                            return pp;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+public Vector <Depute> toVectorDepute(Vector <String[]> datas)
+{
+    Vector <Depute> retour = new Vector<>();
+    for(String [] s : datas)
+    {
+        String nom = s[4];
+        String district = s[2];
+        Depute temp = new Depute(nom);
+        temp.setDistrict(getDistrict(district));
         retour.add(temp);
+    }
+    return retour;
+}
+public District getDistrictOfBv(BureauVote v)
+{
+        for(Faritany f : faritany)
+    {
+        for(Faritra ff : f.getFaritra())
+        {
+            for(District dd : ff.getDistricts())
+            {
+                if(dd.getBureaux().contains(v))
+                {
+                    return dd;
+                }
+            }
+        }
+    }
+    return null;
+}
+public BureauVote getBv(String bv)
+{
+    for(Faritany f : faritany)
+    {
+        for(Faritra ff : f.getFaritra())
+        {
+            for(District d : ff.getDistricts())
+            {
+                for(BureauVote v : d.getBureaux())
+                {
+                    if(v.getName().equals(bv))
+                    {
+                        return v;
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+public Vector <Depute> getElusbyBv(String bv, String filename)
+{
+    Vector <String[]> deputesByBv = getDeputesByBv(bv, filename);
+    Vector <Depute> retour = new Vector<>();
+    Depute elu;
+    Depute elu2;
+    deputesByBv.sort((a, b) -> Integer.compare(Integer.parseInt(b[5]), Integer.parseInt(a[5])));
+    // Map <String, Map <String, Integer>> deputes = toHashMap(deputesByDistricts);
+    BureauVote currentBureauVote = getBv(bv);
+    District currentDistrict = getDistrictOfBv(currentBureauVote);
+    // for(int i = 0; i < currentDistrict.getnombreElus(); i++)
+    // {
+    //     Depute temp = new Depute(deputesByDistricts.get(i)[4]);
+    //     temp.setDistrict(currentDistrict);
+    //     retour.add(temp);
+    // }
+    Vector <Depute> sorted = toVectorDepute(deputesByBv);
+    retour.add(sorted.get(0));
+    if(currentDistrict.getnombreElus() == 2)
+    {
+        elu = sorted.get(0);
+        elu2 = sorted.get(1);
+        Depute second = findSecond(elu, sorted);
+        if(nombreDeVotes(elu, deputesByBv) > 2*nombreDeVotes(elu2, deputesByBv) && !second.equals(elu2))
+        {
+            retour.add(second);
+        }
+        else
+        {
+            retour.add(elu2);
+        }
     }
     return retour;
 }
 // public static Map<String, Map<String, Integer>> toHashMap(Vector<String[]> datas) {
 //     Map<String, Map<String, Integer>> retour = new HashMap<>();
-//     int added = 0;
 
 //     for (String[] s : datas) {
 //         String district = s[2];     
@@ -208,10 +333,7 @@ public Vector <Depute> getElus(String district, String filename)
 //         //raha efa misy le value ao am key district de retourneny fotsiny zany value zany
 //         //else (raha mbola tsisy le value ao le key district) de mamorona key vaovao avec new hashmap ny valeur
 //         deputes.put(depute, deputes.getOrDefault(depute, 0) + value);
-
-//         added++;
 //     }
-//     System.out.println("Added " + added + " times");
 //     return retour;
 // }
 // public static Map<String, Map<String, Integer>> getElus(Map<String, Map<String, Integer>> votesParDistrict) {

@@ -5,7 +5,7 @@ public class District{
     String name;
     int nombreElus;
     Vector<Depute> deputes;
-    Vector<Groupe> groupes;
+    Vector<PartiPolitique> pps;
     Vector<BureauVote> bureaux;
     
     public District(String name, int nombreElus) {
@@ -53,6 +53,10 @@ public class District{
     }
     public void setBureaux(Vector<BureauVote> bureaux) {
         this.bureaux = bureaux;
+    }
+    public Vector<PartiPolitique> getPP()
+    {
+        return pps;
     }
     @Override
 public String toString() {

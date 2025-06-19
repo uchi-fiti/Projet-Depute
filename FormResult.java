@@ -29,6 +29,7 @@ public class FormResult extends JPanel {
         this.liste_faritany = lf;
         // initializeData();
         g = new Gestion(liste_faritany);
+        liste_faritany.add(0, null);
         dropdown_faritany = new JComboBox<>(liste_faritany);
         dropdown_faritra = new JComboBox<>();
         dropdown_distrika = new JComboBox<>();
@@ -68,36 +69,82 @@ private void handleSubmit(String filename){
     District distrika = getSelectedDistrika();
     BureauVote bv = getSelectedBv();
     Vector <String[]> datas;
+    Vector <Vector <Depute>> elus = new Vector<>();
     // Map <String, Map <String, Integer>> deputesToShow;
     if(faritany == null)
     {
-        datas = g.getAllDeputes(filename);
+        // datas = g.getAllDeputes(filename);
+        for(Faritany f : liste_faritany)
+        {
+            if(f != null)
+            {
+                for(Faritra ff : f.getFaritra())
+                {
+                    if(ff != null)
+                    {
+                        for(District dd : ff.getDistricts())
+                        {
+                            if(dd != null)
+                            {
+                                elus.add(g.getElus(dd.getName(), filename));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     else if(faritany != null && faritra == null)
     {
-        String faritanyS = faritany.toString();
-        datas = g.getDeputesByFaritany(faritanyS, filename);
+        // String faritanyS = faritany.toString();
+        // datas = g.getDeputesByFaritany(faritanyS, filename);
+        for(Faritra ff : faritany.getFaritra())
+        {
+            if(ff != null)
+            {
+                for(District dd : ff.getDistricts())
+                {
+                    elus.add(g.getElus(dd.getName(), filename));
+                }
+            }
+        }
     }
     else if(faritany != null && faritra != null && distrika == null)
     {
-        String faritraS = faritra.toString();
-        datas = g.getDeputesByFaritra(faritraS, filename);
+        // String faritraS = faritra.toString();
+        // datas = g.getDeputesByFaritra(faritraS, filename);
+        for(District dd : faritra.getDistricts())
+        {
+            if(dd != null)
+            {
+                elus.add(g.getElus(dd.getName(), filename));
+            }
+        }
     }
     else if(faritany != null && faritra != null && distrika != null && bv == null)
     {
-        String distrikaS = distrika.toString();
-        datas = g.getDeputesByDistricts(distrikaS, filename);
+        // String distrikaS = distrika.toString();
+        // datas = g.getDeputesByDistricts(distrikaS, filename);
+        elus.add(g.getElus(distrika.getName(), filename));
     }
     else {
-        String bvS = bv.toString();
-        datas = g.getDeputesByBv(bvS, filename);
+        elus.add(g.getElusbyBv(bv.getName(), filename));
+        // String bvS = bv.toString();
+        // datas = g.getDeputesByBv(bvS, filename);
     }
-    System.out.println("Deputes loaded from file: ");
-    for(String [] s : datas)
+    for(Vector <Depute> vd : elus)
     {
-        System.out.println("Faritany: " + s[0] + ", Faritra: " + s[1] + ", Distrika: " + s[2] + "Bv: " + s[3] + 
-        ", Deputes: " + s[4] + "Nombre de votes: " + s[5]);
+        for(Depute d : vd)
+        {
+            System.out.println("Depute: " + d.getName());
+        }
     }
+    // System.out.println("Deputes loaded from file: ");
+    // for(String [] s : datas)
+    // {
+    //     System.out.println("Faritany: " + s[0] + ", Faritra: " + s[1] + ", Distrika: " + s[2] + "Bv: " + s[3] + 
+    //     ", Deputes: " + s[4] + "Nombre de votes: " + s[5]);
+    // }
     // deputesToShow = Gestion.toHashMap(datas);
     // for(Map.Entry <String, Map <String, Integer>> entry : deputesToShow.entrySet())
     // {
@@ -220,8 +267,16 @@ private void handleSubmit(String filename){
 
 private void updateFaritra() {
     Faritany faritany_selected = (Faritany) dropdown_faritany.getSelectedItem();
+    Vector <Faritra> faritra = new Vector<>();
     System.out.println("Faritany choisi: " + faritany_selected);
-    Vector <Faritra> faritra = faritany_selected.getFaritra();
+    if(faritany_selected != null)
+    {
+        faritra = faritany_selected.getFaritra();
+        if(faritra.get(0) != null)
+        {
+            faritra.add(0, null);
+        }
+    }
     // System.out.println("Tous les regions dans " + faritany_selected + ": ");
     // for(String a : faritra)
     // {
@@ -234,8 +289,13 @@ private void updateFaritra() {
 
 private void updateDistrika() {
     Faritra faritra_selected = (Faritra) dropdown_faritra.getSelectedItem();
+    Vector <District> district = new Vector<>();
     System.out.println("Faritra choisi: " + faritra_selected);
-    Vector <District> district = faritra_selected.getDistricts();
+    if(faritra_selected != null)
+    {
+        district = faritra_selected.getDistricts();
+
+    }
     // System.out.println("Tous les districts dans " + faritra_selected + ": ");
     // for(String a : distrika)
     // {
@@ -246,7 +306,15 @@ private void updateDistrika() {
 }
 private void updateBV() {
     District distrika_selected = (District) dropdown_distrika.getSelectedItem();
-    Vector <BureauVote> bv = distrika_selected.getBureaux();
+    Vector <BureauVote> bv = new Vector<>();
+    if(distrika_selected != null)
+    {
+        bv = distrika_selected.getBureaux();
+        if(bv.get(0) != null)
+        {
+            bv.add(0, null);
+        }
+    }
     dropdown_bureauDeVote.setModel(new DefaultComboBoxModel<>(bv));
 }
 

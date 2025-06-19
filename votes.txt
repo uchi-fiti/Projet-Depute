@@ -1,1 +1,19 @@
-Analamanga;;Antananarivo Antsimodrano;;Ampitatafika;;BV101;;C1;;12
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Ambohimanga Rova;;Rakoto Jean;;250
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Ambohimanga Rova;;Bema Lahy;;210
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Anosy Avaratra;;Rakoto Jean;;300
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Anosy Avaratra;;Bema Lahy;;350
+Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana Centre;;Rasoa Kely;;450
+Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana Centre;;Soa Fara;;420
+Antananarivo;;Analamanga;;Manjakandriana;;Ambatomanga;;Rasoa Kely;;180
+Antananarivo;;Analamanga;;Manjakandriana;;Ambatomanga;;Soa Fara;;195
+Toamasina;;Atsinanana;;Toamasina I;;Anjoma;;Zoky Be;;850
+Toamasina;;Atsinanana;;Toamasina I;;Anjoma;;Zandry Kely;;840
+Toamasina;;Atsinanana;;Toamasina I;;Ampasimazava;;Zoky Be;;620
+Toamasina;;Atsinanana;;Toamasina I;;Ampasimazava;;Zandry Kely;;635
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Ambohimanga Rova;;Rakoto Jean;;55
+Antananarivo;;Analamanga;;Antananarivo Avaradrano;;Anosy Avaratra;;Bema Lahy;;45
+Antananarivo;;Analamanga;;Manjakandriana;;Manjakandriana Centre;;Rasoa Kely;;110
+Toamasina;;Atsinanana;;Toamasina I;;Anjoma;;Zoky Be;;150
+;;Analamanga;;Manjakandriana;;Ambatomanga;;Soa Fara;;25
+Toamasina;;Atsinanana;;Toamasina I;;Ampasimazava;;Zandry Kely;;
+Toamasina;;Atsinanana;;Toamasina I;;Ampasimazava;;Zoky Be;;115
