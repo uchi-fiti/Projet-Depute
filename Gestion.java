@@ -2,12 +2,19 @@ package data;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 public class Gestion {
-    private static Vector <String[]> loadDeputes(String filename) throws Exception
+    public Vector <Faritany> faritany;
+    public Gestion(Vector <Faritany> f)
+    {
+        this.faritany = f;
+    }
+    private Vector <String[]> loadDeputes(String filename) throws Exception
     {
         Vector <String[]> deputesInFile = new Vector<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -59,7 +66,7 @@ public class Gestion {
 //     retour.add(deputes);
 //     return retour;
 // }
-public static Vector <String[]> getDeputesByBv(String bv, String filename)
+public Vector <String[]> getDeputesByBv(String bv, String filename)
 {
     Vector <String[]> retour = new Vector<>();
     Vector <String[]> loaded;
@@ -80,7 +87,7 @@ public static Vector <String[]> getDeputesByBv(String bv, String filename)
     return retour;
 }
 
-public static Vector <String[]> getDeputesByDistricts(String district, String filename)
+public Vector <String[]> getDeputesByDistricts(String district, String filename)
 {
     Vector <String[]> retour = new Vector<>();
     Vector <String[]> loaded;
@@ -100,7 +107,7 @@ public static Vector <String[]> getDeputesByDistricts(String district, String fi
     }
     return retour;
 }
-public static Vector <String[]> getDeputesByFaritra(String faritra, String filename)
+public Vector <String[]> getDeputesByFaritra(String faritra, String filename)
 {
     Vector <String[]> retour = new Vector<>();
     Vector <String[]> loaded;
@@ -120,7 +127,7 @@ public static Vector <String[]> getDeputesByFaritra(String faritra, String filen
     }
     return retour;
 }
-public static Vector <String[]> getDeputesByFaritany(String faritany, String filename)
+public Vector <String[]> getDeputesByFaritany(String faritany, String filename)
 {
     Vector <String[]> retour = new Vector<>();
     Vector <String[]> loaded;
@@ -140,7 +147,7 @@ public static Vector <String[]> getDeputesByFaritany(String faritany, String fil
     }
     return retour;
 }
-public static Vector <String[]> getAllDeputes(String filename)
+public Vector <String[]> getAllDeputes(String filename)
 {
     Vector <String[]> retour = new Vector<>();
     Vector <String[]> loaded;
@@ -157,13 +164,79 @@ public static Vector <String[]> getAllDeputes(String filename)
     }
     return retour;
 }
-public static Map<String, Integer> results(Vector <String[]> datas)
+public District getDistrict(String nom_district)
 {
-    Map<String, Integer> retour = new HashMap<>();
-    for(String [] s : datas)
+    for(Faritany f : faritany)
     {
-        retour.put(s[4], retour.getOrDefault(s[4], 0) + Integer.parseInt(s[5]));
+        for(Faritra ff : f.getFaritra())
+        {
+            for(District d : ff.getDistricts())
+            {
+                if(d.getName().equals(nom_district))
+                {
+                    return d;
+                }
+            }
+        }
+    }
+    return new District("Skibidi didn't find any district", null);
+}
+public Vector <Depute> getElus(String district, String filename)
+{
+    Vector <String[]> deputesByDistricts = getDeputesByDistricts(district, filename);
+    Vector <Depute> retour = new Vector<>();
+    deputesByDistricts.sort((a, b) -> Integer.compare(Integer.parseInt(a[5]), Integer.parseInt(b[5])));
+    District currentDistrict = getDistrict(district);
+    for(int i = 0; i < currentDistrict.getnombreElus(); i++)
+    {
+        Depute temp = new Depute(deputesByDistricts.get(i)[4]);
+        temp.setDistrict(currentDistrict);
+        retour.add(temp);
     }
     return retour;
 }
+// public static Map<String, Map<String, Integer>> toHashMap(Vector<String[]> datas) {
+//     Map<String, Map<String, Integer>> retour = new HashMap<>();
+//     int added = 0;
+
+//     for (String[] s : datas) {
+//         String district = s[2];     
+//         String depute = s[4];       
+//         int value = Integer.parseInt(s[5]); 
+
+//         Map<String, Integer> deputes = retour.computeIfAbsent(district, k -> new HashMap<>());
+//         //raha efa misy le value ao am key district de retourneny fotsiny zany value zany
+//         //else (raha mbola tsisy le value ao le key district) de mamorona key vaovao avec new hashmap ny valeur
+//         deputes.put(depute, deputes.getOrDefault(depute, 0) + value);
+
+//         added++;
+//     }
+//     System.out.println("Added " + added + " times");
+//     return retour;
+// }
+// public static Map<String, Map<String, Integer>> getElus(Map<String, Map<String, Integer>> votesParDistrict) {
+//     Map<String, Map<String, Integer>> elus = new HashMap<>();
+
+//     for (Map.Entry<String, Map<String, Integer>> entry : votesParDistrict.entrySet()) {
+//         String districtFull = entry.getKey();
+//         String[] districtParts = districtFull.split(":");
+//         String districtName = districtParts[0];
+//         int nombre_elus = Integer.parseInt(districtParts[1]);
+
+//         Map<String, Integer> deputes = entry.getValue();
+
+//         List<Map.Entry<String, Integer>> sortedDeputes = new ArrayList<>(deputes.entrySet());
+//         sortedDeputes.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+//         Map<String, Integer> eluMap = new HashMap<>();
+//         for (int i = 0; i < Math.min(nombre_elus, sortedDeputes.size()); i++) {
+//             Map.Entry<String, Integer> eluEntry = sortedDeputes.get(i);
+//             eluMap.put(eluEntry.getKey(), eluEntry.getValue());
+//         }
+
+//         elus.put(districtName, eluMap);
+//     }
+
+//     return elus;
+// }
 }

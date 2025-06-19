@@ -7,51 +7,50 @@ import java.awt.Graphics2D;
 import java.util.*;
 import javax.swing.*;
 
-public class Tableau extends JPanel{
-    Map <String, Integer> deputes;
-    public Tableau(Map <String, Integer> d)
+public class Tableau extends JPanel {
+    Map <String, Map<String, Integer>> deputes_elus;
+    public Tableau(Map <String, Map <String, Integer>> d)
     {
-        this.deputes = d;
+        this.deputes_elus = d;
     }
     public void paint(Graphics gP) {
         super.paint(gP);
         Graphics2D g = (Graphics2D) gP;
     
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        int x = 50;
+        int y = 50;
+        int rowHeight = 30;
+        int colWidth = 1366 / 3;
+    
+        g.setFont(new Font("Arial", Font.BOLD, 16));
         g.setColor(Color.BLACK);
+        g.drawString("District", x, y);
+        g.drawString("Député élu", x + colWidth, y);
+        g.drawString("Nombre de votes", x + 2 * colWidth, y);
     
-        int xStart = 20;
-        int yStart = 20;
-        int columnWidth = (getWidth() - 40) / 2;
-        int rowHeight = 25; // fixed height per row
+        y += rowHeight;
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
     
-        int numRows = deputes.size() + 1; // +1 for header
-        int tableHeight = rowHeight * numRows;
-        int tableWidth = columnWidth * 2;
+        System.out.println("Tableau drawn!");
     
-        // Draw outer table rectangle
-        g.drawRect(xStart, yStart, tableWidth, tableHeight);
+        for (Map.Entry<String, Map<String, Integer>> entry : deputes_elus.entrySet()) {
+            String district = entry.getKey();
+            Map<String, Integer> elusMap = entry.getValue();
     
-        // Draw horizontal lines (including top and bottom)
-        for (int i = 0; i <= numRows; i++) {
-            int y = yStart + i * rowHeight;
-            g.drawLine(xStart, y, xStart + tableWidth, y);
-        }
+            boolean firstRow = true; 
     
-        // Draw vertical line separating columns
-        g.drawLine(xStart + columnWidth, yStart, xStart + columnWidth, yStart + tableHeight);
+            for (Map.Entry<String, Integer> eluEntry : elusMap.entrySet()) {
+                String deputy = eluEntry.getKey();
+                int votes = eluEntry.getValue();
     
-        // Draw header
-        g.drawString("Deputes: ", xStart + 10, yStart + rowHeight - 8);
-        g.drawString("Nombre de votes: ", xStart + columnWidth + 10, yStart + rowHeight - 8);
+                g.drawString(firstRow ? district : "", x, y);
+                firstRow = false;
     
-        // Draw data rows
-        int rowIndex = 1;
-        for (Map.Entry<String, Integer> entry : deputes.entrySet()) {
-            int y = yStart + rowIndex * rowHeight + rowHeight - 8;
-            g.drawString(entry.getKey(), xStart + 10, y);
-            g.drawString(String.valueOf(entry.getValue()), xStart + columnWidth + 10, y);
-            rowIndex++;
+                g.drawString(deputy, x + colWidth, y);
+                g.drawString(String.valueOf(votes), x + 2 * colWidth, y);
+    
+                y += rowHeight;
+            }
         }
     }
 }
